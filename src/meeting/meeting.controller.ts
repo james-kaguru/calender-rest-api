@@ -27,13 +27,10 @@ export class MeetingController {
   @Post()
   async create(
     @Body() createMeetingDto: CreateMeetingDto,
-    @Req() request: RequestWithUser,
+    @Req() req: RequestWithUser,
   ) {
-    const user = request.user;
-    const userId = parseInt(user.sub);
-
     const isAvailable = await this.meetingService.checkAvailability(
-      userId,
+      req.user.sub,
       createMeetingDto.from,
       createMeetingDto.to,
     );
@@ -42,7 +39,7 @@ export class MeetingController {
       throw new BadRequestException('Meeting time is not available');
 
     return this.meetingService.create({
-      userId,
+      userId: req.user.sub,
       from: createMeetingDto.from,
       to: createMeetingDto.to,
       createdAt: DateTime.now().toISO(),
@@ -51,11 +48,8 @@ export class MeetingController {
 
   @UseGuards(AuthGuard)
   @Get()
-  findAll(@Req() request: RequestWithUser, @Query() query: MeetingQueryDto) {
-    const user = request.user;
-    const userId = parseInt(user.sub);
-
-    return this.meetingService.findAll(userId, query);
+  findAll(@Req() req: RequestWithUser, @Query() query: MeetingQueryDto) {
+    return this.meetingService.findAll(req.user.sub, query);
   }
 
   @Get(':id')

@@ -1,6 +1,6 @@
 export interface RequestWithUser {
   user: {
-    sub: string;
+    sub: number;
     username: string;
   };
 }
