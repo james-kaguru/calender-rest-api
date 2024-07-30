@@ -1,17 +1,58 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
+import { MeetingQueryDto } from './dto/meeting-query.dto';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class MeetingService {
-  create(createMeetingDto: CreateMeetingDto) {
-    return 'This action adds a new meeting';
+  constructor(private prisma: PrismaService) {}
+
+  create(data: Prisma.MeetingUncheckedCreateInput) {
+    return this.prisma.meeting.create({ data });
   }
 
-  checkAvailability(userId: string, from: string, to: string) {}
+  async checkAvailability(userId: number, from: string, to: string) {
+    const meetings = await this.prisma.meeting.findMany({
+      where: {
+        from,
+        to: {
+          lte: to,
+        },
+        userId,
+      },
+    });
 
-  findAll() {
-    return `This action returns all meeting`;
+    return meetings.length <= 0;
+  }
+
+  findAll(userId: number, query: MeetingQueryDto) {
+    const where: Prisma.MeetingWhereInput = {
+      userId,
+    };
+
+    if (query.date) {
+      const date = DateTime.fromISO(query.date);
+      const dateStart = date.startOf('day').toString();
+      const dateEnd = date.endOf('day').toString();
+      where.AND = [
+        {
+          from: {
+            gte: dateStart,
+          },
+        },
+        {
+          from: {
+            lte: dateEnd,
+          },
+        },
+      ];
+    }
+
+    return this.prisma.meeting.findMany({
+      where,
+    });
   }
 
   findOne(id: number) {

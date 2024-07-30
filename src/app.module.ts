@@ -10,7 +10,7 @@ import { MeetingModule } from './meeting/meeting.module';
 
 @Module({
   imports: [
-     ConfigModule.forRoot({
+    ConfigModule.forRoot({
       envFilePath: ['.env'],
       cache: true,
       isGlobal: true,
@@ -19,7 +19,7 @@ import { MeetingModule } from './meeting/meeting.module';
     PrismaModule,
     UserModule,
     AuthModule,
-    MeetingModule
+    MeetingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
