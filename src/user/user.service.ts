@@ -9,18 +9,18 @@ export class UserService {
 
   create(createUserDto: CreateUserDto) {
     // @ts-ignore
-    return this.prisma.user.create({data: createUserDto});
+    return this.prisma.user.create({ data: createUserDto });
   }
 
   findAll() {
     return this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
+  findOne(email: string) {
     return this.prisma.user.findFirst({
-      where:{
-        id,
-      }
+      where: {
+        email,
+      },
     });
   }
 
