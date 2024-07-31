@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -20,9 +16,8 @@ export class AuthService {
 
     if (!user) throw new BadRequestException('Invalid credentials');
 
-    if (user.hash !== password) {
-      throw new UnauthorizedException();
-    }
+    if (user.hash !== password)
+      throw new BadRequestException('Invalid credentials');
 
     const payload = { sub: user.id, username: user.name };
 

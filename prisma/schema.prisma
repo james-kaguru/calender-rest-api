@@ -28,10 +28,13 @@ model User {
 }
 
 model Meeting {
-  id        Int      @id @default(autoincrement())
-  from      DateTime
-  to        DateTime
-  createdAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.Text
+  from        DateTime
+  to          DateTime
+  createdAt   DateTime
+  updatedAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
 }

@@ -52,6 +52,9 @@ export class MeetingService {
 
     return this.prisma.meeting.findMany({
       where,
+      orderBy: {
+        from: 'asc',
+      },
     });
   }
 

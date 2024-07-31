@@ -40,6 +40,8 @@ export class MeetingController {
 
     return this.meetingService.create({
       userId: req.user.sub,
+      title: createMeetingDto.title,
+      description: createMeetingDto.title,
       from: createMeetingDto.from,
       to: createMeetingDto.to,
       createdAt: DateTime.now().toISO(),
