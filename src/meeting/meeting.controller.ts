@@ -29,14 +29,19 @@ export class MeetingController {
     @Body() createMeetingDto: CreateMeetingDto,
     @Req() req: RequestWithUser,
   ) {
-    const isAvailable = await this.meetingService.checkAvailability(
-      req.user.sub,
-      createMeetingDto.from,
-      createMeetingDto.to,
-    );
+    const { isAvailable, meetings } =
+      await this.meetingService.checkAvailability(
+        req.user.sub,
+        createMeetingDto.from,
+        createMeetingDto.to,
+      );
 
-    if (!isAvailable)
-      throw new BadRequestException('Meeting time is not available');
+    if (!isAvailable) {
+      throw new BadRequestException({
+        message: 'Meeting time is not available',
+        meetings,
+      });
+    }
 
     return this.meetingService.create({
       userId: req.user.sub,

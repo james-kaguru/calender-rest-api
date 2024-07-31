@@ -16,15 +16,17 @@ export class MeetingService {
   async checkAvailability(userId: number, from: string, to: string) {
     const meetings = await this.prisma.meeting.findMany({
       where: {
-        from,
-        to: {
+        from: {
           lte: to,
+        },
+        to: {
+          gte: from,
         },
         userId,
       },
     });
 
-    return meetings.length <= 0;
+    return { isAvailable: meetings.length <= 0, meetings };
   }
 
   findAll(userId: number, query: MeetingQueryDto) {
