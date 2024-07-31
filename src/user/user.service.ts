@@ -3,14 +3,23 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
+import * as argon from 'argon2';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    // @ts-ignore
-    return this.prisma.user.create({ data: createUserDto });
+  async create(createUserDto: CreateUserDto) {
+    const hash = await argon.hash(createUserDto.password);
+
+    return this.prisma.user.create({
+      data: {
+        name: createUserDto.name,
+        hash,
+        email: createUserDto.email,
+        role: createUserDto.role,
+      },
+    });
   }
 
   findAll() {

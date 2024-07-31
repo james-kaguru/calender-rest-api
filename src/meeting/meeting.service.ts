@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
@@ -13,9 +13,15 @@ export class MeetingService {
     return this.prisma.meeting.create({ data });
   }
 
-  async checkAvailability(userId: number, from: string, to: string) {
+  async checkAvailability(
+    userId: number,
+    from: string,
+    to: string,
+    meetingId?: number,
+  ) {
     const meetings = await this.prisma.meeting.findMany({
       where: {
+        id: meetingId !== undefined ? { not: meetingId } : {},
         from: {
           lte: to,
         },
@@ -60,15 +66,35 @@ export class MeetingService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} meeting`;
+  async findOne(id: number, userId: number) {
+    const meeting = await this.prisma.meeting.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!meeting)
+      throw new NotFoundException(`Meeting ${meeting.id} not found`);
+    return meeting;
   }
 
-  update(id: number, updateMeetingDto: UpdateMeetingDto) {
-    return `This action updates a #${id} meeting`;
+  update(id: number, updateMeetingDto: UpdateMeetingDto, userId: number) {
+    return this.prisma.meeting.update({
+      where: {
+        userId,
+        id,
+      },
+      data: updateMeetingDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} meeting`;
+  remove(id: number, userId: number) {
+    return this.prisma.meeting.delete({
+      where: {
+        id,
+        userId,
+      },
+    });
   }
 }
