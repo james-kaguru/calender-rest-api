@@ -33,7 +33,7 @@ pnpm install
 - run
 
 ```shell
-pnpm run dev
+pnpm run start:dev
 ```
  
 
