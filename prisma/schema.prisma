@@ -23,7 +23,6 @@ model User {
   name     String
   email    String    @unique
   hash     String
-  role     Role
   meetings Meeting[]
 }
 

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import * as argon from 'argon2';
@@ -17,13 +16,8 @@ export class UserService {
         name: createUserDto.name,
         hash,
         email: createUserDto.email,
-        role: createUserDto.role,
       },
     });
-  }
-
-  findAll() {
-    return this.prisma.user.findMany();
   }
 
   async findOne(email: string): Promise<User | undefined> {
@@ -32,13 +26,5 @@ export class UserService {
         email,
       },
     });
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }
